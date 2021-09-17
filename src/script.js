@@ -1,14 +1,9 @@
 import './style.css';
 import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import * as dat from 'dat.gui';
 
 /**
  * Base
  */
-// Debug
-const gui = new dat.GUI();
-
 // Canvas
 const canvas = document.querySelector('canvas.webgl');
 
@@ -23,26 +18,32 @@ const textureLoader = new THREE.TextureLoader();
 const particleTexture1 = textureLoader.load('/textures/images/1.jpg');
 const particleTexture2 = textureLoader.load('/textures/images/2.jpg');
 const particleTexture3 = textureLoader.load('/textures/images/3.jpg');
-const particleTexture4 = textureLoader.load('/textures/images/4.jpg');
-const particleTexture5 = textureLoader.load('/textures/images/5.jpg');
-const particleTexture6 = textureLoader.load('/textures/images/6.jpg');
-const particleTexture7 = textureLoader.load('/textures/images/7.jpg');
-const particleTexture8 = textureLoader.load('/textures/images/8.jpg');
-const particleTexture9 = textureLoader.load('/textures/images/9.jpg');
-const particleTexture10 = textureLoader.load('/textures/images/10.jpg');
-const particleTexture11 = textureLoader.load('/textures/images/11.jpg');
+// const particleTexture4 = textureLoader.load('/textures/images/4.jpg');
+// const particleTexture5 = textureLoader.load('/textures/images/5.jpg');
+// const particleTexture6 = textureLoader.load('/textures/images/6.jpg');
+// const particleTexture7 = textureLoader.load('/textures/images/7.jpg');
+// const particleTexture8 = textureLoader.load('/textures/images/8.jpg');
+// const particleTexture9 = textureLoader.load('/textures/images/9.jpg');
+// const particleTexture10 = textureLoader.load('/textures/images/10.jpg');
+// const particleTexture11 = textureLoader.load('/textures/images/11.jpg');
 
 /**
  * PARTICLES
  */
 // Geometry
 const particlesGeometry = new THREE.BufferGeometry();
-const count = 90;
+const count = 50;
 
 const positions = new Float32Array(count * 3);
+const imagesArray = new Array(
+  particleTexture1,
+  particleTexture2,
+  particleTexture3
+);
 
 for (let i = 0; i < count * 3; i++) {
   positions[i] = (Math.random() - 0.5) * 10;
+  // imagesArray[i] = Math.random();
 }
 
 particlesGeometry.setAttribute(
@@ -52,7 +53,7 @@ particlesGeometry.setAttribute(
 
 // Material
 const particlesMaterial = new THREE.PointsMaterial({
-  size: 0.6,
+  size: 1,
   sizeAttenuation: true,
 });
 
@@ -61,15 +62,6 @@ particlesMaterial.map = particleTexture1;
 // Points
 const particles = new THREE.Points(particlesGeometry, particlesMaterial);
 scene.add(particles);
-
-/**
- * Test cube
- */
-const cube = new THREE.Mesh(
-  new THREE.BoxGeometry(1, 1, 1),
-  new THREE.MeshBasicMaterial()
-);
-// scene.add(cube);
 
 /**
  * Sizes
@@ -96,20 +88,25 @@ window.addEventListener('resize', () => {
 /**
  * Camera
  */
-// Base camera
+// Camera
 const camera = new THREE.PerspectiveCamera(
   75,
   sizes.width / sizes.height,
-  0.1,
-  100
+  1,
+  1000
 );
-camera.position.z = 3;
 scene.add(camera);
 
-// Controls
-const controls = new OrbitControls(camera, canvas);
-controls.enableDamping = true;
+// Cursor
+const cursor = {
+  x: 0,
+  y: 0,
+};
 
+window.addEventListener('mousemove', (event) => {
+  cursor.x = event.clientX / sizes.width - 0.5;
+  cursor.y = -(event.clientY / sizes.height - 0.5);
+});
 /**
  * Renderer
  */
@@ -127,8 +124,9 @@ const clock = new THREE.Clock();
 const tick = () => {
   const elapsedTime = clock.getElapsedTime();
 
-  // Update controls
-  controls.update();
+  // Update camera
+  camera.position.x = cursor.x * 1.5;
+  camera.position.y = cursor.y * 1.5;
 
   // Render
   renderer.render(scene, camera);
