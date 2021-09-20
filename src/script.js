@@ -104,8 +104,8 @@ const cursor = {
 };
 
 window.addEventListener('mousemove', (event) => {
-  cursor.x = event.clientX / sizes.width - 0.5;
-  cursor.y = -(event.clientY / sizes.height - 0.5);
+  cursor.x = (event.clientX / sizes.width - 0.5) * 0.2;
+  cursor.y = -(event.clientY / sizes.height - 0.5) * 0.2;
 });
 /**
  * Renderer
@@ -126,6 +126,7 @@ const tick = () => {
 
   // Update camera
   camera.position.x = cursor.x * 1.5;
+  // cursor.x += (event.clientX - cursor.x) * 0.2;
   camera.position.y = cursor.y * 1.5;
 
   // Render
